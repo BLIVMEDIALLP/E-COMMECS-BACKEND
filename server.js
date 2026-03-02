@@ -24,8 +24,17 @@ app.use(cors({
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // Rate limiting
-app.use("/api/", rateLimit({ windowMs: 15 * 60 * 1000, max: 500, message: "Too many requests" }));
-app.use("/api/auth/login", rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: "Too many login attempts" }));
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 500 });
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10 });
+app.use("/api/", limiter);
+app.use("/api/auth/login", loginLimiter);
+```
+
+The fix is changing `max` to `limit` — that's what changed in `express-rate-limit` v7.
+
+Commit → Railway auto-redeploys → should go green. Then visit:
+```
+https://e-commecs-backend-production.up.railway.app/api/seed-init
 
 // Body parsers — NOTE: webhook route uses raw body, so it's registered before json()
 app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
