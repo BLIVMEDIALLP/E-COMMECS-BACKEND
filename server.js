@@ -30,11 +30,7 @@ app.use("/api/", limiter);
 app.use("/api/auth/login", loginLimiter);
 ```
 
-The fix is changing `max` to `limit` — that's what changed in `express-rate-limit` v7.
 
-Commit → Railway auto-redeploys → should go green. Then visit:
-```
-https://e-commecs-backend-production.up.railway.app/api/seed-init
 
 // Body parsers — NOTE: webhook route uses raw body, so it's registered before json()
 app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
